@@ -178,6 +178,7 @@ One short imperative subject line: no body, no trailer, no co-author line, no ti
 | a task is created | `Add T-042 Shopping list` |
 | a task is renumbered after a collision | `Renumber T-042 to T-043` |
 | a hardening pass settles something | `Harden T-042: <what it settled>` |
+| the task file changes after the build (fixes after the report, build-time decisions confirmed or changed, a revision of a built task) | `Revise T-042: <what changed>` |
 | a task is started | `Start T-042` |
 | a build step is done | `Finish step 3 of T-042` |
 | a task is built | `Finish T-042` |
