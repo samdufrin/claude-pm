@@ -1,0 +1,13 @@
+{
+  "name": "samduf",
+  "owner": {
+    "name": "Samuel Dufrin"
+  },
+  "plugins": [
+    {
+      "name": "pm",
+      "source": "./",
+      "description": "Markdown project management on an orphan pm branch: tasks, releases and docs any agent can pick up"
+    }
+  ]
+}

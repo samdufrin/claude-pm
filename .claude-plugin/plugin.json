@@ -1,0 +1,9 @@
+{
+  "name": "pm",
+  "description": "Markdown project management on an orphan pm branch: tasks, releases and docs any agent can pick up",
+  "author": {
+    "name": "Samuel Dufrin"
+  },
+  "repository": "https://github.com/samdufrin/claude-pm",
+  "license": "MIT"
+}
