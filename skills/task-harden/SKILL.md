@@ -60,7 +60,7 @@ Don't re-raise something the task records as `**Confirmed:**` (including choices
 - Remove the resolved item from Open questions (write `None.` if it's now empty). Don't renumber the remaining ones beyond closing the gap, and don't renumber sections.
 - Write it as settled fact in the task's existing voice and structure. Don't add a changelog or phrases like "updated per discussion".
 - Keep edits surgical. Don't rewrite or reformat sections unrelated to the issue.
-- Write the task and commit it before starting the next pass, so an interrupted run never loses a resolved issue: `sh ${CLAUDE_PLUGIN_ROOT}/scripts/pm-commit.sh <pm> "Harden T-042: <what it settled>"`, handling its exit code as `conventions.md` says. Then tell the user in one line which pass just finished and what it settled ("Pass 2 of 5: confirmed X"), and go back to step 3.
+- Write the task and commit it before starting the next pass, so an interrupted run never loses a resolved issue: `sh ${CLAUDE_PLUGIN_ROOT}/scripts/pm-commit.sh <pm> 'Harden T-042: <what it settled>'`, handling its exit code as `conventions.md` says. Then tell the user in one line which pass just finished and what it settled ("Pass 2 of 5: confirmed X"), and go back to step 3.
 
 ### 6. Report and stop
 First update the frontmatter `status` (only if it was `proposal` or `ready`):
