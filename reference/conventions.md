@@ -290,8 +290,8 @@ After syncing and before changing anything, a skill checks every section it uses
 | Skill | Sections it needs |
 |---|---|
 | `/pm:task-implement` | `testing.md`: `## Full check`, `## Environment` |
-| `/pm:task-close` | `testing.md`: `## Full check` (not for a hotfix, which merges nothing) |
-| `/pm:release-ship` | `testing.md`: `## Full check`; `release.md`: `## Deploy`, `## Rollback` |
+| `/pm:task-close` | `testing.md`: `## Full check`, `## Environment` (neither for a hotfix, which merges nothing) |
+| `/pm:release-ship` | `testing.md`: `## Full check`, `## Environment`; `release.md`: `## Deploy`, `## Rollback` |
 | `/pm:release-deployed` | `release.md`: `## After deploy` |
 
 The same skills also check the optional sections of those files when they're present. `/pm:docs-init`, `/pm:status`, `/pm:task-create` and `/pm:task-harden` don't block; `/pm:status` lists undefined sections under loose ends.
