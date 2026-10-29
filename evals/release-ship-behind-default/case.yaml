@@ -1,0 +1,5 @@
+schema_version: "1.1"
+name: release-ship-behind-default
+description: release-ship refuses when master has commits release/next lacks, changes nothing and says to merge master into release/next.
+context:
+  scaffold_script: scaffold.sh

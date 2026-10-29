@@ -1,0 +1,5 @@
+schema_version: "1.1"
+name: release-ship-hotfix-conflict
+description: release-ship of a hotfix that conflicts with master aborts the merge, commits and tags nothing, and names the conflicting file.
+context:
+  scaffold_script: scaffold.sh

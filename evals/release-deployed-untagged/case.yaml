@@ -1,0 +1,5 @@
+schema_version: "1.1"
+name: release-deployed-untagged
+description: release-deployed before the tag is pushed changes nothing and says to push first.
+context:
+  scaffold_script: scaffold.sh

@@ -1,0 +1,5 @@
+schema_version: "1.1"
+name: release-ship-failing-check
+description: release-ship whose merged result fails the full check aborts the merge, commits and tags nothing, keeps the release open and names the failing check.
+context:
+  scaffold_script: scaffold.sh

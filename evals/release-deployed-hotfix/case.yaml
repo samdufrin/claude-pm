@@ -1,0 +1,5 @@
+schema_version: "1.1"
+name: release-deployed-hotfix
+description: release-deployed for a pushed hotfix marks 1.0.1 deployed and deletes the hotfix branch on origin, leaving release/next and releases/next.md alone.
+context:
+  scaffold_script: scaffold.sh

@@ -1,0 +1,5 @@
+schema_version: "1.1"
+name: release-ship-hotfix
+description: release-ship of a hotfix while a release is open ships it as 1.0.1, merges master into release/next and pushes it, and keeps the hotfix branch on origin.
+context:
+  scaffold_script: scaffold.sh

@@ -1,0 +1,5 @@
+schema_version: "1.1"
+name: release-deployed
+description: release-deployed after the tag is pushed marks 1.1.0 deployed, recreates release/next from master, pushes it and opens a fresh releases/next.md.
+context:
+  scaffold_script: scaffold.sh
