@@ -1,0 +1,5 @@
+schema_version: "1.1"
+name: docs-init-ignored-claude
+description: docs-init on a project whose .gitignore ignores /.claude.
+context:
+  scaffold_script: scaffold.sh

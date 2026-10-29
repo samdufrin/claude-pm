@@ -1,0 +1,5 @@
+schema_version: "1.1"
+name: docs-init-attach
+description: docs-init in a fresh clone of an origin that already has pm attaches the worktree and changes nothing else.
+context:
+  scaffold_script: scaffold.sh
