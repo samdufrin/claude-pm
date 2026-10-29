@@ -19,6 +19,19 @@ claude plugin install pm@samduf --scope project
 
 The plugin has no version number: every commit pushed to this repo is the new version. The project settings turn on auto-update for the marketplace, so changes arrive on their own. For a user-scope install, turn on auto-update for `samduf` in `/plugin`, or run `claude plugin marketplace update samduf`.
 
+**Trust.** An update reaches every installer automatically, and the skills run git and the project's check commands on your machine. So this repo is pushed to only with two-factor authentication, and `master` is a protected branch. A project that would rather pin a version can set `ref` (a branch or tag of this repo) on the marketplace's source in its `.claude/settings.json`, and turn `autoUpdate` off:
+
+```json
+"extraKnownMarketplaces": {
+  "samduf": {
+    "source": { "source": "github", "repo": "samdufrin/claude-pm", "ref": "<tag or branch>" },
+    "autoUpdate": false
+  }
+}
+```
+
+A marketplace source takes `ref` but not `sha`, so to pin an exact commit, pin a tag or branch you trust not to move.
+
 ## Commands
 
 | Command | What it does |

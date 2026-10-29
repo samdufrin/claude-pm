@@ -28,6 +28,15 @@
 
 set -eu
 
+# Every function below writes into the working directory and builds a git
+# repo there. The eval runner starts each scaffold in a new, empty workspace,
+# so refuse anything else: run by hand from the plugin repo or a real project,
+# these helpers would rewrite that repo's files and history.
+if [ -n "$(ls -A .)" ]; then
+    echo "lib.sh: refusing to run in $(pwd): it isn't empty. Scaffolds build a scratch git repo in the current directory, so run them only in a new, empty workspace (the eval runner does this)." >&2
+    exit 1
+fi
+
 PM_ROOT=$(cd "$(dirname "$0")/../.." && pwd)
 PM_TEMPLATES=$PM_ROOT/templates
 PM_SCAFFOLD=$PM_ROOT/evals/_scaffold
