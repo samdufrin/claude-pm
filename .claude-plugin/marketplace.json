@@ -3,6 +3,7 @@
   "owner": {
     "name": "Samuel Dufrin"
   },
+  "description": "Claude Code plugins by Samuel Dufrin",
   "plugins": [
     {
       "name": "pm",
