@@ -193,6 +193,7 @@ One short imperative subject line: no body, no trailer, no co-author line, no ti
 | a release is deployed | `Deploy 1.1.0` |
 | a new release is opened | `Open the next release` |
 | `.pm/` is created | `Set up pm docs` |
+| a workflow file is filled in or changed by hand (the user, when a skill stopped on an undefined section) | `Update workflows: <what changed>` |
 
 Code commits:
 - a build step: a one-line imperative description of what the step does (`Add the shopping list page`);
@@ -322,7 +323,7 @@ A changed file (`git diff --name-only <base>...HEAD`) matches if its path starts
 
 ## Asking the user
 
-- Every question uses `AskUserQuestion`, with at most 4 questions per call, the recommended option first marked "(Recommended)" with a one-line reason.
+- Every question uses `AskUserQuestion`, with at most 4 questions per call, the recommended option first marked "(Recommended)" with a one-line reason. The exception is an acceptance question, where the answer is the user's own verdict (`/pm:task-close`'s manual acceptance question): its options carry no recommendation.
 - When `AskUserQuestion` isn't available (a headless `claude -p` run), ask the same question, with the same options numbered and the recommendation marked, in plain text as the last thing in your message, and end your turn. Carry on from that point when the answer arrives.
 - Never ask what the task file, the `.pm/` docs or the code already answer.
 

@@ -1,0 +1,5 @@
+schema_version: "1.1"
+name: task-close-hotfix
+description: task-close on a built hotfix merges nothing, records its commit against the default branch and creates its hotfix release doc.
+context:
+  scaffold_script: scaffold.sh

@@ -1,0 +1,5 @@
+schema_version: "1.1"
+name: task-close-conditional
+description: task-close runs a conditional check whose condition the task branch's diff (against release/next) meets.
+context:
+  scaffold_script: scaffold.sh

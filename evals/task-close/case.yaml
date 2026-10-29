@@ -1,0 +1,5 @@
+schema_version: "1.1"
+name: task-close
+description: task-close on a built quick task merges its two-commit branch into release/next with --no-ff, records it and closes it.
+context:
+  scaffold_script: scaffold.sh
