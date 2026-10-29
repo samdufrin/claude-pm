@@ -1,0 +1,5 @@
+schema_version: "1.1"
+name: task-create-quick-next-id
+description: "task-create --quick with T-007 already in tasks/done/ writes the new task as T-008."
+context:
+  scaffold_script: scaffold.sh

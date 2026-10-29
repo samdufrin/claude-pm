@@ -1,0 +1,5 @@
+schema_version: "1.1"
+name: task-create-collision
+description: "task-create syncs .pm/ before choosing an ID: with a teammate's T-001 on origin's pm but not fetched, the new task is T-002 and the teammate's file is untouched."
+context:
+  scaffold_script: scaffold.sh

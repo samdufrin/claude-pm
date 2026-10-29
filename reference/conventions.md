@@ -23,7 +23,7 @@ Skills create files from `${CLAUDE_PLUGIN_ROOT}/templates/`, replacing every `{{
 | `baseline-release.md` | `<pm>/releases/<version>.md` | `{{version}}` (no `v`), `{{default_branch}}`, `{{now}}` (UTC timestamp), `{{merge}}` (the default branch's HEAD, short SHA) |
 | `claude-md-block.md` | inserted into the project's `CLAUDE.md` | none; see The CLAUDE.md block |
 
-`{{owner}}` is `git config user.name`; `{{date}}` is the local date (see Timestamps). The slug is the title in lowercase, words joined by `-`, only `a-z`, `0-9` and `-`, at most 40 characters, cut at a word boundary.
+`{{owner}}` is `git config user.name`; `{{date}}` is the local date (see Timestamps). The slug is made from the title: lowercase; apostrophes dropped (`don't` becomes `dont`); accented letters transliterated to plain ASCII (`é` becomes `e`) and any other non-ASCII character dropped; every run of other characters becomes one `-`; no leading or trailing `-`. So only `a-z`, `0-9` and `-` remain. Cut it to at most 40 characters at a word boundary (a `-`); if the first word alone is longer than 40, hard-cut at 40. If nothing is left, the slug is `task`.
 
 ## The `.pm/` layout
 
@@ -73,6 +73,7 @@ closed: null             # set by task-close: local date
 ```
 
 - Keys appear in this order. Unset values are `null` (or `[]` for `commits`). Lists are inline: `commits: [a1b2c3d, e4f5a6b]`.
+- **Quoting `title:`.** Write the title plain unless YAML would misread it: double-quote it when it contains `: ` or ` #`, or starts with any of `"'[]{}&*!|>%@` or a backtick. Inside the quotes, write each `\` as `\\` and each `"` as `\"`. Examples: `title: Fix the footer`, `title: "Login: show error"`, `title: "Fix issue #12"`, `title: "\"Save\" button label"`, `title: "[WIP] footer"`. Everyone who reads `title:` strips the surrounding double quotes and unescapes `\"` and `\\` before using it (in headings, commit messages, reports). The `# T-042: <title>` heading always holds the plain, unquoted title.
 - `type`: `feature` for new behaviour, `fix` for a bug fix, `chore` for anything else (refactors, dependencies, docs), `hotfix` for an urgent fix shipped on its own from the default branch. A hotfix is always quick, with `priority: high`.
 
 ### Status and folder
@@ -155,7 +156,7 @@ All `.pm/` git commands use `git -C <pm> …`. Never `cd` into `<pm>` and forget
 ## Syncing `.pm/`
 
 - **Before reading anything you'll act on**, run `pm-sync.sh <pm>`: it runs `git pull --rebase` when `pm` has an upstream. A read-only skill (`/pm:status`) runs `git -C <pm> fetch` instead and reports how far behind it is.
-- **After each logical change** (a new task, a status move, a step marked done, a release update), run `pm-commit.sh <pm> "<message>"`. It stages everything in `<pm>`, commits, rebases onto the upstream and pushes. If the push is rejected because someone pushed `pm` in between, it rebases and pushes again, 3 pushes in all. It never forces.
+- **After each logical change** (a new task, a status move, a step marked done, a release update), run `pm-commit.sh <pm> '<message>'` (quoted as Commit messages says). It stages everything in `<pm>`, commits, rebases onto the upstream and pushes. If the push is rejected because someone pushed `pm` in between, it rebases and pushes again, 3 pushes in all. It never forces.
 - One commit per logical change, with one message from the list below. Don't batch unrelated changes into one commit, and don't leave changes in `<pm>` uncommitted when a skill ends.
 
 ### Exit codes
@@ -171,7 +172,11 @@ With no `origin` remote, or no upstream on `pm`, the scripts commit without push
 
 ## Commit messages
 
-One short imperative subject line: no body, no trailer, no co-author line, no ticket prefix. `.pm/` commits use exactly these forms:
+One short imperative subject line: no body, no trailer, no co-author line, no ticket prefix.
+
+**Quoting.** A message that contains a title (or any other text from the user) is passed to the shell in single quotes, with each `'` in it written as `'\''`, never inside double quotes, so `$( )`, backticks, `"` and `\` stay literal: `pm-commit.sh <pm> 'Add T-042 Don'\''t lose drafts'`, `git commit -m 'Merge T-042 Show "$PATH" in the log'`. Use the plain (unquoted, unescaped) title, as the `# T-042: <title>` heading has it.
+
+`.pm/` commits use exactly these forms:
 
 | When | Message |
 |---|---|
@@ -192,7 +197,7 @@ One short imperative subject line: no body, no trailer, no co-author line, no ti
 Code commits:
 - a build step: a one-line imperative description of what the step does (`Add the shopping list page`);
 - the task's code-doc edits: `Update docs for T-042`;
-- merging a task: `Merge T-042 <title>`;
+- merging a task: `Merge T-042 <title>` (`git commit -m 'Merge T-042 <title>'`, quoted as above);
 - shipping: `Release 1.1.0`;
 - a hotfix into `release/next`: `Merge 1.0.1 into release/next`;
 - the project setup on the default branch: `Set up pm`.
@@ -230,7 +235,7 @@ Merging a task at close and merging a release or hotfix at ship are test merges:
 2. If it conflicts, list the conflicting files (`git diff --name-only --diff-filter=U`), run `git merge --abort`, and stop.
 3. Otherwise run the full check and the conditional checks that apply (see Workflow files) on the merged result, with the environment started as `## Environment` says.
 4. If any check fails, run `git merge --abort` and stop.
-5. Only if both succeed, commit (`git commit -m "<message>"`), and for a release, tag.
+5. Only if both succeed, commit (`git commit -m '<message>'`, quoted as Commit messages says), and for a release, tag.
 
 On a stop, nothing is committed, tagged, renamed or moved: the task stays in `active/`, the release doc stays `open`. The report gives the conflicting files or the failing check, and the fix: on the branch being merged, `git merge --no-ff <target branch>`, resolve any conflict, push it, and rerun the skill. Skills never resolve merge conflicts themselves.
 

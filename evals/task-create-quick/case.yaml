@@ -1,0 +1,5 @@
+schema_version: "1.1"
+name: task-create-quick
+description: "task-create --quick writes a ready quick task T-001 to the backlog, then commits and pushes it on pm, changing nothing on the code branches."
+context:
+  scaffold_script: scaffold.sh

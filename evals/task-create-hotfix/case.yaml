@@ -1,0 +1,5 @@
+schema_version: "1.1"
+name: task-create-hotfix
+description: "task-create --hotfix writes a ready quick task with type hotfix and priority high, its title (which holds a colon) double-quoted in the frontmatter, committed and pushed on pm."
+context:
+  scaffold_script: scaffold.sh
