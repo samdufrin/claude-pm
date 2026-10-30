@@ -110,7 +110,7 @@ claude plugin validate .
 The eval suite in `evals/` runs the skills against scripted repos and grades the results:
 
 ```sh
-claude plugin eval . --scaffold --trust-plugin --ablation none -j 4 --allow-tools Bash Read Write Edit Glob Grep Skill
+claude plugin eval . --scaffold --trust-plugin --ablation none -j 4 --allow-tools Bash Read Write Edit Glob Grep Skill Agent
 ```
 
 It needs a machine where Claude Code can sandbox Bash.

@@ -1,0 +1,5 @@
+schema_version: "1.1"
+name: task-implement-targeted
+description: task-implement on a quick task with targeted checks runs the Always line and the group the diff touches, skips the unrelated group, and never runs the full check.
+context:
+  scaffold_script: scaffold.sh
