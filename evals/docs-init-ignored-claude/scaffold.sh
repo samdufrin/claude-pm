@@ -3,6 +3,10 @@
 # file there that must stay ignored after the rule is rewritten.
 . "$(dirname "$0")/../_scaffold/lib.sh"
 make_project
+# local-still-ignored checks that .gitignore keeps ignoring
+# settings.local.json, so it mustn't be in .git/info/exclude.
+grep -vxF /.claude/settings.local.json .git/info/exclude > _eval.tmp
+mv _eval.tmp .git/info/exclude
 printf 'node_modules/\n/.claude\n*.log\n' > .gitignore
 git add .gitignore
 git commit --quiet -m "Ignore local files"

@@ -145,6 +145,17 @@ make_project() {
     exclude "/_eval/"
     exclude "/evals-report.sh"
     exclude "/eval-report.txt"
+    # The Linux Bash sandbox leaves empty placeholders for the paths it
+    # protects in the workspace; without these lines they make the checkout
+    # look dirty, and the skills stop on it.
+    for p in .bash_profile .bashrc .gitconfig .gitmodules .idea .mcp.json \
+        .profile .ripgreprc .vscode .zprofile .zshrc .eval-artifacts \
+        .claude/agents .claude/commands .claude/hooks .claude/launch.json \
+        .claude/loop.md .claude/output-styles .claude/routines \
+        .claude/scheduled_tasks.json .claude/settings.local.json \
+        .claude/skills .claude/workflows; do
+        exclude "/$p"
+    done
     cp "$PM_SCAFFOLD/evals-report.sh" "$PROJECT/evals-report.sh"
 
     cat > "$PROJECT/README.md" <<'MD'
