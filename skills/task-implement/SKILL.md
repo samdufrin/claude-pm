@@ -32,11 +32,11 @@ Every question in the kickoff uses `AskUserQuestion`. When it isn't available (a
 ### 1. Find and read the task
 First read `${CLAUDE_PLUGIN_ROOT}/reference/conventions.md` (the operating rules: layout, git flow, pushing, sync, commit messages, workflow files) and `${CLAUDE_PLUGIN_ROOT}/reference/task-format.md`. Locate `.pm/` with `sh "${CLAUDE_PLUGIN_ROOT}/scripts/pm-dir.sh"`; if it exits 1, stop with "pm is not set up in this clone: run /pm:docs-init." Run `sh "${CLAUDE_PLUGIN_ROOT}/scripts/pm-sync.sh" "<pm>"` and handle its exit code as `conventions.md` says (stop and report on 1 or 2). Then `git -C "<pm>" ls-files -s` must show no entry with mode `120000`; if one does, stop and name it (conventions.md, No symlinks).
 
-Then check the workflow sections this skill uses, before changing anything: in `<pm>/workflows/testing.md`, `## Full check` and `## Environment`, plus `## Conditional checks`, `## Security-sensitive paths` and `## Quick checks` when they're present. A section is undefined when its heading is missing, it's empty, or it still contains a `<!-- fill in: … -->` comment (`None.` is defined; an absent optional section means none). If any is undefined, stop and name each undefined file and section (e.g. "`## Full check` in `.pm/workflows/testing.md` isn't filled in"), leaving the task and branches as they were. Never guess a command.
+Then check the workflow sections this skill uses, before changing anything: in `<pm>/workflows/testing.md`, `## Full check` and `## Environment`, plus `## Targeted checks`, `## Conditional checks`, `## Security-sensitive paths` and `## Quick checks` when they're present. A section is undefined when its heading is missing, it's empty, or it still contains a `<!-- fill in: … -->` comment (`None.` is defined; an absent optional section means none). If any is undefined, stop and name each undefined file and section (e.g. "`## Full check` in `.pm/workflows/testing.md` isn't filled in"), leaving the task and branches as they were. Never guess a command.
 
 Use the ID in `$ARGUMENTS` (`T-042`, or `42` for `T-042`; it must then match `^T-[0-9]{3,}$`, or stop and say it isn't a task ID) and find `<pm>/tasks/backlog/T-042-*.md` (status `proposal` or `ready`) or `<pm>/tasks/active/T-042-*.md` (a resumed run). If it's in `tasks/done/`, say it's done and stop: done tasks aren't built or edited again. If there isn't an ID, look for tasks in `backlog/` with `status: ready`: use it if there's exactly one, and ask with `AskUserQuestion` if there are several. If the chosen task is already `built` (for example after `/pm:task-close`'s **Some failed** answer), don't rebuild it: see **Revising a built task** below.
 
-Read the **whole** task file, the project's `CLAUDE.md` (and `README` if there's no `CLAUDE.md`), `<pm>/README.md` and `<pm>/workflows/testing.md`. From `testing.md`, note the full check (`## Full check`), the conditional checks (`## Conditional checks`), any quick checks, and how to start the environment (`## Environment`); from `CLAUDE.md`, the commands for single tests, types and linting, and its conventions and non-negotiables. Every brief you write later repeats the ones that apply.
+Read the **whole** task file, the project's `CLAUDE.md` (and `README` if there's no `CLAUDE.md`), `<pm>/README.md` and `<pm>/workflows/testing.md`. From `testing.md`, note the targeted checks (`## Targeted checks`; without it, the full check `## Full check` stands in), the conditional checks (`## Conditional checks`), any quick checks, and how to start the environment (`## Environment`); from `CLAUDE.md`, the commands for single tests, types and linting, and its conventions and non-negotiables. Every brief you write later repeats the ones that apply.
 
 ### 2. Collect what the task leaves open
 Don't ask anything yet: collect the items for step 4. A status of `ready` means `/pm:task-harden` found nothing left to guess; still run these checks, since the code may have moved on since. Look for anything an implementer would have to guess about:
@@ -67,7 +67,7 @@ For a full task, ask every question in one sitting with `AskUserQuestion` (up to
 - if there are many, or they suggest the task isn't ready, include a first question offering to stop and run `/pm:task-harden T-042` instead.
 
 **Run settings**, every time (skip only the ones that don't apply):
-1. **Baseline failures**, if the full check already fails before the build: go on and judge later failures against the baseline (Recommended), or fix them first as an extra step 0.
+1. **Baseline failures**, if the baseline check (step 5) already fails before the build: go on and judge later failures against the baseline (Recommended), or fix them first as an extra step 0.
 2. **Questions during the build:** decide by the decision rule and record it for review (Recommended), or skip the affected step and its dependents and carry on with the rest.
 3. **Medium security findings:** fix them (Recommended), or list them in the report only. Critical and high findings are always fixed.
 
@@ -75,7 +75,7 @@ Write the answers, and step 2's fixes, into the task file the way `/pm:task-hard
 
 Then tell the user in a few lines: the run settings, the work packages (step 5's list), the commands it will run, and that permission prompts would also pause the run, so the session should be in a mode that doesn't prompt for the project's commands (for example auto mode). This is the last message that expects anything from them. Go straight on.
 
-**Commands it will run:** every command the run takes from `.pm/`, exactly as written there: `## Environment` (unless `None.`), the `## Full check` block, each `## Conditional checks` and `## Quick checks` line from `workflows/testing.md`, and each Build order step's **Verify:** line. Under them, who last changed each source: `git -C "<pm>" log -1 --format=%an -- workflows/testing.md`, and the same for the task file; for each that isn't `git config user.name`, say "`<file>` was last changed by <name>." Run no other command from `.pm/`.
+**Commands it will run:** every command the run takes from `.pm/`, exactly as written there: `## Environment` (unless `None.`), each `## Targeted checks` line (or, without that section, the `## Full check` block), each `## Conditional checks` and `## Quick checks` line from `workflows/testing.md`, and each Build order step's **Verify:** line. Under them, who last changed each source: `git -C "<pm>" log -1 --format=%an -- workflows/testing.md`, and the same for the task file; for each that isn't `git config user.name`, say "`<file>` was last changed by <name>." Run no other command from `.pm/`.
 
 ## Build
 
@@ -86,7 +86,7 @@ Then tell the user in a few lines: the run settings, the work packages (step 5's
   - In `<pm>`: if the task is in `backlog/`, `git -C "<pm>" mv` it to `tasks/active/`. Set `status: in-progress`, `owner` to `git config user.name` and `branch` to the branch name. Commit with `sh "${CLAUDE_PLUGIN_ROOT}/scripts/pm-commit.sh" "<pm>" 'Start T-042'` (it also carries the kickoff answers), handling its exit code as `conventions.md` says. On a resumed run with nothing to change, there's nothing to commit.
   - A hotfix's release doc isn't created here: `/pm:task-close` creates it.
 - Pushes: every code push in this run is a plain `git push origin '<branch>'` of the task branch (with `-u` the first time). Never push the default branch, `release/next` or tags, and never `--force`. If a push is rejected (someone else pushed that branch), stop the run, leaving the local commits; never pull or rebase the branch to get past it. Before stopping, keep `.pm/` clean: set the task's `status: blocked` (moving it to `tasks/active/` with `git -C "<pm>" mv` if it's still in `backlog/`), append ` **Blocked:** pushing <branch> was rejected: <git's message>.` to the step being built (the first step without `**Done.**`), and commit `.pm/` with `sh "${CLAUDE_PLUGIN_ROOT}/scripts/pm-commit.sh" "<pm>" 'Block T-042'`. Report the branch and git's message. With no `origin`, nothing is pushed; say so once in the report.
-- Run the full check (`## Full check` in `testing.md`, with the environment started as `## Environment` says) on the new branch to record the **baseline**, then each conditional check whose condition the diff (`git diff --name-only <base>...HEAD`) meets; when unsure whether a condition applies, run the check, and note each conditional check run or skipped, and why. If anything already fails, write down exactly what and follow the step 4 setting (judge later failures against it, or fix it first as step 0 through an agent). Later failures are judged against this baseline.
+- Run the **targeted check** (conventions.md, Targeted checks), with the environment started as `## Environment` says, on the new branch to record the **baseline**. Nothing is built yet, so pick its lines by the files and areas the task's Build order and design sections name; when unsure whether a line applies, run it. Note each line run or skipped, and why. Never run the full check here unless the project has no `## Targeted checks`. If anything already fails, write down exactly what and follow the step 4 setting (judge later failures against it, or fix it first as step 0 through an agent). Later failures are judged against this baseline.
 
 Turn the task's **Build order** into work packages, one per step, keeping its order. Use the task's own steps; don't regroup or reorder them unless a step is too large for one agent (then split it into sub-steps that each end in something verifiable).
 
@@ -104,7 +104,7 @@ For each package, do the following. Don't start the next package until this one 
 - the step's text verbatim, and what is **not** part of this step (later steps' work), so it doesn't run ahead;
 - what earlier steps already built (files and names), so it reuses them;
 - the conventions and non-negotiables from `CLAUDE.md` that apply, by name;
-- the commands to run (in the project's environment, e.g. inside its container);
+- the commands to run (in the project's environment, e.g. inside its container): the step's tests and, when the project has `## Targeted checks`, the lines for its area rather than the full check;
 - these working rules:
   - Read the files the task names, and the existing code it says to mimic, before writing anything. Match the surrounding code's style, naming and comment density.
   - Write the step's tests from the task's Tests section first, or alongside the code, and make them prove the rules (permissions, validation, edge cases), not just the happy path.
@@ -127,7 +127,7 @@ For each package, do the following. Don't start the next package until this one 
 
 **c. Verify it yourself.** Don't take the report's word for it:
 - `git diff --stat` and read the diff of the changed files: does it do what the step says, and only that?
-- Run the step's **Verify** command from the task, plus the relevant tests, the type checker and the linter for the files touched. Compare against the baseline.
+- Run the step's **Verify** command from the task (if it is the `## Full check` command and the project has `## Targeted checks`, run the targeted check for the step's diff instead, and say so in the report), plus the relevant tests, the type checker and the linter for the files touched. Compare against the baseline.
 - Check that every test the task lists for this step exists and actually asserts the rule it names.
 
 **d. Independent review.** Dispatch a second, fresh `general-purpose` subagent as the reviewer. Give it the task file's path and sections, `CLAUDE.md`, the list of files the step changed, and ask it to read the diff (`git diff -- <files>`, plus the new files) and report findings only, without editing anything:
@@ -150,7 +150,7 @@ Then write one progress line ("Step 3 of 9 done: <what now works>.", or "Step 3 
 ### 7. Full verification
 After the last step:
 - Every fix made from here on (regressions, security fixes, added browser tests, fixes found driving the app, in steps 7 to 9) is committed on the task branch as its own commit, one short imperative line describing it, and pushed before moving on. Never sweep a fix into `Update docs for T-042`.
-- Run the **full check** (`## Full check` in `testing.md`), then each conditional check whose condition the diff (`git diff --name-only <base>...HEAD`) meets; when unsure whether a condition applies, run the check, and note each conditional check run or skipped, and why. Everything must pass, apart from failures already in the baseline. Fix regressions through a fixer agent, then re-run (at most two rounds; report what still fails).
+- Run the **targeted check** (conventions.md, Targeted checks) for the whole diff (`git diff --name-only <base>...HEAD`): every `Always` line, each `When` line the change meets, any changed test file those don't cover, then each conditional check whose condition the diff meets. When unsure whether a line or condition applies, run it, and note each one run or skipped, and why. Don't run the full check (unless the project has no `## Targeted checks`): `/pm:task-close` runs it on the merged result. Everything must pass, apart from failures already in the baseline. Fix regressions through a fixer agent, then re-run (at most two rounds; report what still fails).
 - Read the whole feature diff (`git diff <base>...` or against the baseline) once yourself, looking for leftovers: debug output, commented-out code, TODOs, stray files, unused code.
 - Go through the task section by section and check each behaviour, rule, message, limit and test exists, apart from blocked steps. List anything missing and build it (through an agent, verified as in step 6) before going on.
 
@@ -182,14 +182,14 @@ A quick task skips this step: it gets no automated user testing and no manual ac
 
 ### 10. Docs and task status
 - Make the edits the task's **Code docs** list names, on the task branch, through an agent or yourself, following the doc's own voice, for what was built (not blocked steps). If the feature also changes something else `CLAUDE.md` describes (routes, tables, actions, conventions, commands, test files), update those passages too, so `CLAUDE.md` stays accurate. Don't add a section about the task, and don't cite it or its IDs: the task file lives on the `pm` branch, not with the code. Don't edit `.pm/` docs other than the task file: the **`.pm/` docs** list is applied by `/pm:task-close` once the work is merged. Commit the edits on the task branch as `Update docs for T-042` and push; if there was nothing to change, skip the commit.
-- Run the full check (and the conditional checks that apply, as in step 7) one last time if anything changed.
+- Run the targeted check (as in step 7) one last time if anything changed.
 - If any step is blocked or a `critical`/`high` finding is unfixed, set the task's `status: blocked` and commit `.pm/` with `sh "${CLAUDE_PLUGIN_ROOT}/scripts/pm-commit.sh" "<pm>" 'Block T-042'`. Otherwise set `status: built` and commit `.pm/` with `sh "${CLAUDE_PLUGIN_ROOT}/scripts/pm-commit.sh" "<pm>" 'Finish T-042'`.
 
 ### 11. Report
 This is the first thing the user reads when they return. Lead with what needs them, then the rest, briefly:
 - **Needs you:** blocked steps (why, what was tried, what's needed), any unfixed `critical`/`high` finding, and the decisions made during the build (`**Default, not confirmed:**` cells chosen by the decision rule, by `D` number with the choice and the reason) for them to confirm or change;
 - what was built, step by step, in a line each;
-- the checks run at the end and their results (counts, not adjectives), and each conditional check run or skipped, and why;
+- the checks run at the end and their results (counts, not adjectives), each targeted and conditional check run or skipped, and why, and that the full check runs at `/pm:task-close`;
 - security findings: what was fixed, and anything listed at `medium` or `low`; for a quick task, whether the audit ran and which paths triggered it;
 - user testing: what was tested automatically and by driving the app;
 - the **manual acceptance script** (step 9c);

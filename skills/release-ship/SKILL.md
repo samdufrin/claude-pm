@@ -29,7 +29,7 @@ Rules for the whole run:
 
 ## 2. Check the workflow sections
 
-Read `<pm>/workflows/testing.md` and `<pm>/workflows/release.md`. These must be defined: `## Full check` and `## Environment` in `testing.md` (the test merge starts the environment and runs the check); `## Deploy` and `## Rollback` in `release.md`. So must `## Conditional checks`, `## Security-sensitive paths` and `## Quick checks` in `testing.md` when they're present. A section is **undefined** when its heading is missing, it has no text under it, or it still contains a `<!-- fill in: … -->` comment; `None.` is defined. If any is undefined, **stop** and name each one by file and section (e.g. "`## Rollback` in `.pm/workflows/release.md` isn't filled in"). Nothing has changed.
+Read `<pm>/workflows/testing.md` and `<pm>/workflows/release.md`. These must be defined: `## Full check` and `## Environment` in `testing.md` (the test merge starts the environment and runs the check); `## Deploy` and `## Rollback` in `release.md`. So must `## Targeted checks`, `## Conditional checks`, `## Security-sensitive paths` and `## Quick checks` in `testing.md` when they're present. A section is **undefined** when its heading is missing, it has no text under it, or it still contains a `<!-- fill in: … -->` comment; `None.` is defined. If any is undefined, **stop** and name each one by file and section (e.g. "`## Rollback` in `.pm/workflows/release.md` isn't filled in"). Nothing has changed.
 
 ## 3. Pick the release
 

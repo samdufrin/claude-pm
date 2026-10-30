@@ -30,12 +30,12 @@ Rules for the whole run:
 2. `sh "${CLAUDE_PLUGIN_ROOT}/scripts/pm-sync.sh" "<pm>"`, handling its exit code as `conventions.md` says (1: stop and show its message; 2: stop and report the conflicting files). If it printed `not synced: pm has no upstream`, remember to say once in the report that nothing was pushed. Then `git -C "<pm>" ls-files -s` must show no entry with mode `120000`; if one does, **stop** and name it (conventions.md, No symlinks).
 3. Read `<pm>/README.md`.
 
-This skill doesn't block on undefined workflow sections: it reads `workflows/testing.md` for the check commands it names, and if `## Full check` isn't filled in, it names a concrete check of its own instead.
+This skill doesn't block on undefined workflow sections: it reads `workflows/testing.md` for the check commands it names, and if neither `## Targeted checks` nor `## Full check` is filled in, it names a concrete check of its own instead.
 
 ## 3. Learn the context before asking anything
 
 1. Read the project's `CLAUDE.md` and `README` (whichever exist), and the code the description touches: the files to change, the modules it resembles, the conventions it has to follow.
-2. Read the `.pm/` docs that cover that area (`architecture/` and `workflows/`, found through `README.md`'s "read when" lines), and `<pm>/workflows/testing.md` for the full check, any quick checks and how the environment starts.
+2. Read the `.pm/` docs that cover that area (`architecture/` and `workflows/`, found through `README.md`'s "read when" lines), and `<pm>/workflows/testing.md` for the targeted checks, the full check, any quick checks and how the environment starts.
 3. Glance at the titles in `<pm>/tasks/*/` (`grep -h '^title:' "<pm>"/tasks/*/T-*.md`). A finished full task there is a style reference. If one in `backlog/` or `active/` already covers this change, say so: in the default mode, raise it in the first round; in `--quick` or `--hotfix` mode, make it your one round of questions (create it anyway, or stop).
 4. Never ask the user something the code or the docs already answer. Record those facts yourself and cite file paths in the task.
 
@@ -83,7 +83,7 @@ Ask a few questions per round, wait for the answers, then ask the next round. Ke
    - `--quick`: `type` inferred (`fix` for a bug or typo fix, `feature` for new behaviour, `chore` for anything else), `priority: normal`, `status: ready`, `quick: true`.
    - `--hotfix`: `type: hotfix`, `priority: high`, `status: ready`, `quick: true`.
    - **Title:** if the description is a short phrase (at most 60 characters), the title is the description itself, with its first letter capitalised and any trailing period removed; don't reword it. Otherwise write a short title (at most 60 characters) that names the change.
-3. **Write the quick task** in `task-format.md`'s quick format, from `${CLAUDE_PLUGIN_ROOT}/templates/quick-task.md`: **Goal**, **Summary** naming the files to change (found in section 3), usually one **Build order** step whose `**Verify:**` names a real command and what passing looks like (the `## Full check` command from `workflows/testing.md` when it's filled in, plus a targeted check of the change itself where one exists, such as a test or a `grep`), and **Acceptance**. No Decisions, Open questions or Docs sections. Then go to section 6.
+3. **Write the quick task** in `task-format.md`'s quick format, from `${CLAUDE_PLUGIN_ROOT}/templates/quick-task.md`: **Goal**, **Summary** naming the files to change (found in section 3), usually one **Build order** step whose `**Verify:**` names a real command and what passing looks like (the `## Targeted checks` lines from `workflows/testing.md` that cover the change, or the `## Full check` command when the project has no targeted checks, plus a check of the change itself where one exists, such as a test or a `grep`), and **Acceptance**. No Decisions, Open questions or Docs sections. Then go to section 6.
 
 ## 6. Claim the ID: write, commit and push at once
 

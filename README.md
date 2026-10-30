@@ -67,7 +67,7 @@ A task is one file, such as `tasks/backlog/T-042-shopping-list.md`. Its ID never
 
 Every project fills in its two workflow files. The skills hold the process; these hold the project's facts.
 
-- `testing.md` needs `## Full check` (the command that runs every check) and `## Environment` (how to start what the checks need, or `None.`). Optional: `## Conditional checks`, `## Security-sensitive paths`, `## Quick checks`.
+- `testing.md` needs `## Full check` (the command that runs every check) and `## Environment` (how to start what the checks need, or `None.`). Optional: `## Targeted checks` (your tests in groups, such as Playwright tags, each with what it covers; `/pm:task-implement` runs only the groups a change needs, and the full check runs only at `/pm:task-close` and `/pm:release-ship`), `## Conditional checks`, `## Security-sensitive paths`, `## Quick checks`.
 - `release.md` needs `## Deploy`, `## After deploy` and `## Rollback`.
 
 A section is undefined while its heading is missing, it's empty or it still holds a `fill in` comment. A skill that needs an undefined section stops and names it, before changing anything.
